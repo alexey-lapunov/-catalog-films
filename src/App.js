@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
-//import Poster from 'components/Poster'
+import Poster from './components/Poster/index.js'
 
 class App extends Component {
   state = {
-    posterArray: []
+    filmsArray: null
   };
 
   getData = (url, done) => {
@@ -14,7 +14,6 @@ class App extends Component {
       if (xhr.status === 200) {
         let json = JSON.parse(xhr.response);
         done(json.Search);
-        //console.log(json);
       } else {
         console.error(xhr.statusText);
       }
@@ -27,28 +26,26 @@ class App extends Component {
     xhr.send();
   };
 
-  componentDidMount() {
-    let posts = [];
-
+  componentWillMount() {
     this.getData('http://www.omdbapi.com/?s=Batman&apikey=b20770cd', (movies) => {
-      movies.map((item)=> {
-        return(
-          posts.push(item.Poster)
-        )
-      })
+      this.setState({filmsArray: movies})
     })
   };
 
   render() {
     return (
       <div className="App">
-        {
-          this.state.posterArray.map((i, item) => {
-            return(
-              <img src={item} alt=""/>
-            )
-          })
-        }
+        <div className="grid">
+          {
+            this.state.filmsArray ? this.state.filmsArray.map((item, i) => {
+              return(
+                <div className="grid__col" key={i}>
+                  <Poster img={item.Poster}/>
+                </div>
+              )
+            }) : null
+          }
+        </div>
       </div>
     );
   }
